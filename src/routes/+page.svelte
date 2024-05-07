@@ -1,2 +1,10 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+    export let data;
+</script>
+
+<h1>SvelteKit environment variables on Cloudflare</h1>
+<p>If the Cloudflare Adapter reads wrangler.toml [vars] the below will display 4 environment variables:</p>
+
+<pre>
+    {JSON.stringify(data, null, 2)}
+</pre>

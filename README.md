@@ -1,38 +1,41 @@
-# create-svelte
+# SvelteKit Cloudflare environment variables
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+## The issue
 
-## Creating a project
+Local development requires environment variables **and** secrets to exist in `.env`
 
-If you're seeing this, you've probably already done this step. Congrats!
+A successful deployment requires:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- environment variables to exist in [wrangler.toml](./wrangler.toml) under the `[vars]` section
+- secrets to be created and encrypted in the Project dashboard
 
-# create a new project in my-app
-npm create svelte@latest my-app
+As a result the developer needs to maintain parity between the `.env` environment variables and the `wrangler.toml` environment variables
+
+Note: The environment variables under `[vars]` are currently exposed and accessible to SvelteKit if you access them as a binding (E.g., `platform.env.NAME`). Using this is plausible however it means both secrets and environment variables are only accessible via `server` routes and need to be passed around via `load` functions if required client-side.
+
+## Suggested solution
+
+Surface the `wrangler.toml [vars]` items as environment variables locally so they are accessible via [the standard SvelteKit approach](https://kit.svelte.dev/docs/modules#$env-dynamic-private):
+
+```js
+import { PUBLIC_STATIC_VAR } from '$env/static/public';
+import { env } from '$env/dynamic/public';
+
+let dynamic = env.PUBLIC_VAR
 ```
 
-## Developing
+## Example / reproduction
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+1. Clone the repository
+2. Install dependencies
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```
+pnpm install
 ```
 
-## Building
+3. Copy/rename `.env.example` to `.env`
+4. Run the development server and load the index page
 
-To create a production version of your app:
-
-```bash
-npm run build
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+pnpm run dev --open
+```
